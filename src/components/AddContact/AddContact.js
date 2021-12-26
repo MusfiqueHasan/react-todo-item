@@ -1,19 +1,29 @@
 import React, { useRef } from 'react';
+import { nanoid } from 'nanoid'
 import axios from 'axios'
-const AddContact = () => {
+import { addToDb, getStoredCart } from '../../localStorage/localDb';
 
+
+const AddContact = ({ loginUser }) => {
+
+    const savedData = getStoredCart()
+    console.log(savedData);
 
     const nameRef = useRef()
     const emailRef = useRef()
     const phoneNumberRef = useRef()
-    const handleSubmit = e => {
 
+
+    const handleSubmit = e => {
+        const id = nanoid();
         const name = nameRef.current.value;
         const phoneNumber = phoneNumberRef.current.value;
         const email = emailRef.current.value;
-        const newUser = { name, email, phoneNumber }
-        axios.post('http://localhost:5000/users', newUser)
+        const newUser = {id, name, email, phoneNumber }
+
+        axios.post('http://localhost:5000/addContact', { newUser, savedData })
             .then(res => {
+                addToDb(newUser)
                 console.log(res);
                 if (res.data.insertedId) {
                     alert('added successfully')

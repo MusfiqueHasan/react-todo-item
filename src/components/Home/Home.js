@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
+import { getStoredCart } from '../../localStorage/localDb';
 import Todos from '../Todos/Todos';
 
 const Home = () => {
 
     const [todos, setTodos] = useState([]);
-
+    const savedData = getStoredCart()
+    const loggedInUserEmail = Object.keys(savedData)[0]
     useEffect(() => {
-        const url = `http://localhost:5000/users`
+        const url = `http://localhost:5000/users/${loggedInUserEmail}`
         fetch(url)
             .then(res => res.json())
-            .then(data => setTodos(data));
-    }, []);
+            .then(data => setTodos(data.userList));
+    }, [loggedInUserEmail]);
+    console.log(todos);
 
     const handleDeleteTodo = id => {
         const proceed = window.confirm("are you sure you want to delete")
